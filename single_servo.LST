@@ -1,0 +1,76 @@
+C51 COMPILER V9.01   SINGLE_SERVO                                                          08/31/2016 16:07:59 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE SINGLE_SERVO
+OBJECT MODULE PLACED IN single_servo.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE single_servo.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "single_servo.h"
+   2          
+   3          sbit pwmPin = P1^7;
+   4          
+   5          uint  initialValueHigh;
+   6          uint  initialValueLow;
+   7          bit  pwmFlag;
+   8          
+   9          int value20000 = 18432;
+  10          
+  11          void ServoWrite(uint initialValueIn)
+  12          {
+  13   1              initialValueHigh = 65536-initialValueIn;
+  14   1              initialValueLow  = 65536-(18432-initialValueIn);
+  15   1      
+  16   1      }
+  17           
+  18          void ServoInit()
+  19          {
+  20   1              TMOD |= 0x10;
+  21   1              TH1 = 0;
+  22   1              TL1 = 0;
+  23   1              pwmFlag = 0;
+  24   1              ServoWrite(1500);
+  25   1              EA  = 1;
+  26   1              ET1 = 1;
+  27   1              TR1 = 1;
+  28   1      
+  29   1      }
+  30          
+  31          void pwmInterrupt() //interrupt 3        using 2
+  32          {
+  33   1              if (pwmFlag == 0)
+  34   1              {
+  35   2                      TH1 = initialValueLow>>8;
+  36   2                      TL1 = (initialValueLow<<8)>>8;
+  37   2                      pwmPin   = ~pwmPin;
+  38   2                      pwmFlag = ~pwmFlag;
+  39   2                      return;
+  40   2              }
+  41   1              
+  42   1              if (pwmFlag == 1)
+  43   1              {
+  44   2                      TH1 = initialValueHigh>>8;
+  45   2                      TL1 = (initialValueHigh<<8)>>8;
+  46   2                      pwmPin   = ~pwmPin;
+  47   2                      pwmFlag  = ~pwmFlag;
+  48   2                      return;
+  49   2              }
+  50   1      }
+*** WARNING C316 IN LINE 50 OF single_servo.c: unterminated conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     78    ----
+C51 COMPILER V9.01   SINGLE_SERVO                                                          08/31/2016 16:07:59 PAGE 2   
+
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

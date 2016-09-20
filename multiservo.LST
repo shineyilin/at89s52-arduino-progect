@@ -1,0 +1,149 @@
+C51 COMPILER V9.01   MULTISERVO                                                            09/12/2016 22:31:58 PAGE 1   
+
+
+C51 COMPILER V9.01, COMPILATION OF MODULE MULTISERVO
+OBJECT MODULE PLACED IN multiservo.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE multiservo.c BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          #include "multiservo.h"
+   2          uint initialValue[] = {1500,1500,1500,1500,1500,1500,1500,1500};                                                  
+   3          uint userValue[]    = {1500,1500,1500,1500,1500,1500,1500,1500};
+   4          
+   5          uint COUNTVALUE[9];
+   6          
+   7          sbit pwmPin1 = P1^0;
+   8          sbit pwmPin2 = P1^1;
+   9          sbit pwmPin3 = P1^2;
+  10          sbit pwmPin4 = P1^3;
+  11          sbit pwmPin5 = P1^4;
+  12          sbit pwmPin6 = P1^5;
+  13          sbit pwmPin7 = P1^6;
+  14          sbit pwmPin8 = P1^7;
+  15          
+  16          void updateMultiServo(uint count_value[8])
+  17          {       
+  18   1              uchar i = 0;
+  19   1              uint tal = 0;
+  20   1              uint temp = 0;
+  21   1              for ( i = 0; i <8; i++)
+  22   1              {
+  23   2                      temp = count_value[i];
+  24   2                      COUNTVALUE[i] = 65536 - temp;
+  25   2                      tal += count_value[i];
+  26   2              }
+  27   1                      COUNTVALUE[8] = 65536-(18432 - tal);
+  28   1      }
+  29          
+  30          
+  31          void MultiServoInterrupt() interrupt 3   using 3
+  32          {
+  33   1              static uchar i = 1;
+  34   1              switch(i)
+  35   1              {
+  36   2                      case 1:
+  37   2                              TH1 = COUNTVALUE[0]>>8;
+  38   2                              TL1 = (COUNTVALUE[0]<<8)>>8;
+  39   2                              pwmPin1 = 1;
+  40   2                              break;
+  41   2                                                                                       
+  42   2                      case 2:
+  43   2                              TH1 = COUNTVALUE[1]>>8;
+  44   2                              TL1 = (COUNTVALUE[1]<<8)>>8;
+  45   2                              pwmPin1 = 0;
+  46   2                              pwmPin2 = 1;
+  47   2                              break;
+  48   2                      case 3:
+  49   2                              TH1 = COUNTVALUE[2]>>8;
+  50   2                              TL1 = (COUNTVALUE[2]<<8)>>8;
+  51   2                              pwmPin2 = 0;
+  52   2                              pwmPin3 = 1;
+  53   2                              break;
+  54   2                                                                                       
+  55   2                      case 4:
+C51 COMPILER V9.01   MULTISERVO                                                            09/12/2016 22:31:58 PAGE 2   
+
+  56   2                              TH1 = COUNTVALUE[3]>>8;
+  57   2                              TL1 = (COUNTVALUE[3]<<8)>>8;
+  58   2                              pwmPin3 = 0;
+  59   2                              pwmPin4 = 1;
+  60   2                              break;
+  61   2                      case 5:
+  62   2                              TH1 = COUNTVALUE[4]>>8;
+  63   2                              TL1 = (COUNTVALUE[4]<<8)>>8;
+  64   2                              pwmPin4 = 0;
+  65   2                              pwmPin5 = 1;
+  66   2                              break;
+  67   2                                                                                       
+  68   2                      case 6:
+  69   2                              TH1 = COUNTVALUE[1]>>8;
+  70   2                              TL1 = (COUNTVALUE[1]<<8)>>8;
+  71   2                              pwmPin5 = 0;
+  72   2                              pwmPin6 = 1;
+  73   2                              break;
+  74   2                      case 7:
+  75   2                              TH1 = COUNTVALUE[2]>>8;
+  76   2                              TL1 = (COUNTVALUE[2]<<8)>>8;
+  77   2                              pwmPin6 = 0;
+  78   2                              pwmPin7 = 1;
+  79   2                              break;
+  80   2                                                                                       
+  81   2                      case 8:
+  82   2                              TH1 = COUNTVALUE[3]>>8;
+  83   2                              TL1 = (COUNTVALUE[3]<<8)>>8;
+  84   2                              pwmPin7 = 0;
+  85   2                              pwmPin8 = 1;
+  86   2                              break;
+  87   2      
+  88   2      
+  89   2                      case 9:
+  90   2                              TH1 = COUNTVALUE[4]>>8;
+  91   2                              TL1 = (COUNTVALUE[4]<<8)>>8;
+  92   2                              pwmPin8 = 0;
+  93   2                              i = 0;
+  94   2                              break;
+  95   2              }
+  96   1              i += 1;
+  97   1      }
+  98          void MultiServoInit()
+  99          {
+ 100   1              TMOD |= 0x10;
+ 101   1              TH1 = 0;
+ 102   1              TL1 = 0;
+ 103   1              updateMultiServo(initialValue);
+ 104   1              //MultiServoWrite(initialValue);
+ 105   1              EA  = 1;
+ 106   1              ET1 = 1;
+ 107   1              TR1 = 1;
+ 108   1      }
+ 109          
+ 110          
+ 111          
+ 112          
+ 113          void change(uint va)
+ 114          {
+ 115   1              uchar i = 8;
+ 116   1              for     (i = 0; i < 8; i++)
+ 117   1              {
+C51 COMPILER V9.01   MULTISERVO                                                            09/12/2016 22:31:58 PAGE 3   
+
+ 118   2                       userValue[i] = va;
+ 119   2              }
+ 120   1              updateMultiServo(userValue);
+ 121   1      }
+*** WARNING C316 IN LINE 121 OF multiservo.c: unterminated conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    355    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     51       7
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)

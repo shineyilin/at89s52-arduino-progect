@@ -1,0 +1,8 @@
+"show.obj",
+"STARTUP.obj",
+"main.obj",
+"uart.obj",
+"ir_func.obj",
+"multiservo.obj" 
+TO "z51_board" 
+RAMSIZE(256) 
